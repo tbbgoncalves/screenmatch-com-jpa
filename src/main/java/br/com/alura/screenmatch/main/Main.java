@@ -69,6 +69,7 @@ public class Main {
         System.out.println("Digite o nome da série para buscar:");
         var nomeSerie = leitura.nextLine();
 
+        System.out.println("Buscando a série. Aguarde um momento...");
         var json = consumoApi.pegarDados(URL + nomeSerie.replace(" ", "+") + API_KEY);
 
         return conversorDados.pegarDados(json, DadosSerie.class);
