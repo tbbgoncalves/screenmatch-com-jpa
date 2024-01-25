@@ -2,12 +2,15 @@ package br.com.alura.screenmatch.main;
 
 import br.com.alura.screenmatch.model.DadosSerie;
 import br.com.alura.screenmatch.model.DadosTemporada;
+import br.com.alura.screenmatch.model.Serie;
 import br.com.alura.screenmatch.service.ConsumoApi;
 import br.com.alura.screenmatch.service.ConversorDados;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class Main {
     private Scanner leitura = new Scanner(System.in);
@@ -84,12 +87,20 @@ public class Main {
     }
 
     private void listarSeriesBuscadas() {
+        List<Serie> series;
+
         if(seriesBuscadas.isEmpty()) {
             System.out.println("Nenhuma série pesquisada até o momento");
         }
         else {
             System.out.println("Séries buscadas até o momento:");
-            seriesBuscadas.forEach(System.out::println);
+            series = seriesBuscadas.stream()
+                    .map(s -> new Serie(s))
+                    .collect(Collectors.toList());
+
+            series.stream()
+                    .sorted(Comparator.comparing(Serie::getTitulo))
+                    .forEach(System.out::println);
         }
     }
 }
