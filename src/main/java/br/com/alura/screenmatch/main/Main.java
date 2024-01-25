@@ -15,15 +15,17 @@ public class Main {
     private final String API_KEY = "&apikey=7b75c184";
     private ConsumoApi consumoApi = new ConsumoApi();
     private ConversorDados conversorDados = new ConversorDados();
+    private List<DadosSerie> seriesBuscadas = new ArrayList<>();
 
     public void showMenu() {
         var opcao = 0;
 
         do {
             var menu = """
-                    1 - Buscar séries
-                    2 - Buscar episódios                
-                    0 - Sair    
+                    \n1 - Buscar séries
+                    2 - Buscar episódios      
+                    3 - Listar as séries buscadas        
+                    0 - Sair   
                     
                     Digite a opção desejada:""";
 
@@ -38,6 +40,9 @@ public class Main {
                 case 2:
                     buscarEpisodioPorSerie();
                     break;
+                case 3:
+                    listarSeriesBuscadas();
+                    break;
                 case 0:
                     System.out.println("Encerrando aplicação");
                     break;
@@ -48,26 +53,43 @@ public class Main {
     }
 
     private void buscarSerieWeb() {
-        DadosSerie dados = getDadosSerie();
-        System.out.println(dados);
+        DadosSerie serie = getDadosSerie();
+
+        if(!seriesBuscadas.contains(serie)) {
+            seriesBuscadas.add(serie);
+        }
+
+        System.out.println(serie);
     }
 
     private DadosSerie getDadosSerie() {
         System.out.println("Digite o nome da série para buscar:");
         var nomeSerie = leitura.nextLine();
+
         var json = consumoApi.pegarDados(URL + nomeSerie.replace(" ", "+") + API_KEY);
+
         return conversorDados.pegarDados(json, DadosSerie.class);
     }
 
     private void buscarEpisodioPorSerie(){
-        DadosSerie dadosSerie = getDadosSerie();
+        DadosSerie serie = getDadosSerie();
         List<DadosTemporada> temporadas = new ArrayList<>();
 
-        for (int i = 1; i <= dadosSerie.totalTemporadas(); i++) {
-            var json = consumoApi.pegarDados(URL + dadosSerie.titulo().replace(" ", "+") + "&season=" + i + API_KEY);
+        for (int i = 1; i <= serie.totalTemporadas(); i++) {
+            var json = consumoApi.pegarDados(URL + serie.titulo().replace(" ", "+") + "&season=" + i + API_KEY);
             temporadas.add(conversorDados.pegarDados(json, DadosTemporada.class));
         }
 
         temporadas.forEach(System.out::println);
+    }
+
+    private void listarSeriesBuscadas() {
+        if(seriesBuscadas.isEmpty()) {
+            System.out.println("Nenhuma série pesquisada até o momento");
+        }
+        else {
+            System.out.println("Séries buscadas até o momento:");
+            seriesBuscadas.forEach(System.out::println);
+        }
     }
 }
