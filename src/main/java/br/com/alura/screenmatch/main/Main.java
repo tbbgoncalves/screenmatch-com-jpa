@@ -3,6 +3,7 @@ package br.com.alura.screenmatch.main;
 import br.com.alura.screenmatch.model.DadosSerie;
 import br.com.alura.screenmatch.model.DadosTemporada;
 import br.com.alura.screenmatch.model.Serie;
+import br.com.alura.screenmatch.repository.SerieRepository;
 import br.com.alura.screenmatch.service.ConsumoApi;
 import br.com.alura.screenmatch.service.ConversorDados;
 
@@ -19,6 +20,11 @@ public class Main {
     private ConsumoApi consumoApi = new ConsumoApi();
     private ConversorDados conversorDados = new ConversorDados();
     private List<DadosSerie> seriesBuscadas = new ArrayList<>();
+    private SerieRepository serieRepository;
+
+    public Main(SerieRepository serieRepository) {
+        this.serieRepository = serieRepository;
+    }
 
     public void showMenu() {
         var opcao = 0;
@@ -56,11 +62,10 @@ public class Main {
     }
 
     private void buscarSerieWeb() {
-        DadosSerie serie = getDadosSerie();
+        DadosSerie dadosSerie = getDadosSerie();
+        Serie serie = new Serie(dadosSerie);
 
-        if(!seriesBuscadas.contains(serie)) {
-            seriesBuscadas.add(serie);
-        }
+        serieRepository.save(serie);
 
         System.out.println(serie);
     }
