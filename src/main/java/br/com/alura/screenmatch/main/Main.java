@@ -93,20 +93,10 @@ public class Main {
     }
 
     private void listarSeriesBuscadas() {
-        List<Serie> series;
+        List<Serie> series = serieRepository.findAll();
 
-        if(seriesBuscadas.isEmpty()) {
-            System.out.println("Nenhuma série pesquisada até o momento");
-        }
-        else {
-            System.out.println("Séries buscadas até o momento:");
-            series = seriesBuscadas.stream()
-                    .map(s -> new Serie(s))
-                    .collect(Collectors.toList());
-
-            series.stream()
-                    .sorted(Comparator.comparing(Serie::getTitulo))
-                    .forEach(System.out::println);
-        }
+        series.stream()
+                .sorted(Comparator.comparing(Serie::getTitulo))
+                .forEach(System.out::println);
     }
 }
