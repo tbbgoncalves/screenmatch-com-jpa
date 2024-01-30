@@ -29,9 +29,10 @@ public class Main {
 
         do {
             var menu = """
-                    \n1 - Buscar séries
-                    2 - Buscar episódios      
-                    3 - Listar as séries buscadas        
+                    \n1 - Buscar dados de série
+                    2 - Buscar dados de episódios      
+                    3 - Listar as séries buscadas
+                    4 - Pesquisar série buscada        
                     0 - Sair   
                     
                     Digite a opção desejada:""";
@@ -49,6 +50,9 @@ public class Main {
                     break;
                 case 3:
                     listarSeriesBuscadas();
+                    break;
+                case 4:
+                    buscarSeriePorTitulo();
                     break;
                 case 0:
                     System.out.println("Encerrando aplicação");
@@ -83,9 +87,7 @@ public class Main {
         System.out.println("Digite o nome da serie:");
         var nomeSerie = leitura.nextLine();
 
-        Optional<Serie> optionalSerie = series.stream()
-                .filter(s -> s.getTitulo().toLowerCase().contains(nomeSerie.toLowerCase()))
-                .findFirst();
+        Optional<Serie> optionalSerie = serieRepository.findByTituloContainingIgnoreCase(nomeSerie);
 
         if(optionalSerie.isPresent()) {
             var serie = optionalSerie.get();
@@ -121,5 +123,19 @@ public class Main {
         series.stream()
                 .sorted(Comparator.comparing(Serie::getTitulo))
                 .forEach(System.out::println);
+    }
+
+    private void buscarSeriePorTitulo() {
+        System.out.println("Digite o nome da serie:");
+        var nomeSerie = leitura.nextLine();
+        Optional<Serie> serieBuscada = serieRepository.findByTituloContainingIgnoreCase(nomeSerie);
+
+        if(serieBuscada.isPresent()) {
+            System.out.printf("Serie encontrada:");
+            System.out.println(serieBuscada.get());
+        }
+        else {
+            System.out.println("Serie não encontrada");
+        }
     }
 }
