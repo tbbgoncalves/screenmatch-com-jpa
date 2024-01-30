@@ -33,7 +33,8 @@ public class Main {
                     2 - Buscar dados de episódios      
                     3 - Listar as séries buscadas
                     4 - Pesquisar série buscada 
-                    5 - Buscar séries por ator       
+                    5 - Buscar séries por ator     
+                    6 - Top 5 séries  
                     0 - Sair   
                     
                     Digite a opção desejada:""";
@@ -57,6 +58,9 @@ public class Main {
                     break;
                 case 5:
                     buscarSeriePorAtor();
+                    break;
+                case 6:
+                    buscarTop5Series();
                     break;
                 case 0:
                     System.out.println("Encerrando aplicação");
@@ -160,6 +164,18 @@ public class Main {
         }
         else {
             System.out.println("Nenhuma série encontrada");
+        }
+    }
+
+    private void buscarTop5Series() {
+        List<Serie> topSeries = serieRepository.findTop5ByOrderByAvaliacaoDesc();
+
+        if(!topSeries.isEmpty()) {
+            System.out.println("Top 5 séries");
+            topSeries.forEach(s -> System.out.println(s.getTitulo() + ": " + s.getAvaliacao()));
+        }
+        else {
+            System.out.println("Nenhuma série salva no banco de dados para listar");
         }
     }
 }
