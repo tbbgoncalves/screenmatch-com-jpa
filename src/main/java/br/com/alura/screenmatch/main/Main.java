@@ -1,9 +1,6 @@
 package br.com.alura.screenmatch.main;
 
-import br.com.alura.screenmatch.model.DadosSerie;
-import br.com.alura.screenmatch.model.DadosTemporada;
-import br.com.alura.screenmatch.model.Episodio;
-import br.com.alura.screenmatch.model.Serie;
+import br.com.alura.screenmatch.model.*;
 import br.com.alura.screenmatch.repository.SerieRepository;
 import br.com.alura.screenmatch.service.ConsumoApi;
 import br.com.alura.screenmatch.service.ConversorDados;
@@ -34,7 +31,8 @@ public class Main {
                     3 - Listar as séries buscadas
                     4 - Pesquisar série buscada 
                     5 - Buscar séries por ator     
-                    6 - Top 5 séries  
+                    6 - Top 5 séries 
+                    7 - Buscar séries por categoria 
                     0 - Sair   
                     
                     Digite a opção desejada:""";
@@ -61,6 +59,9 @@ public class Main {
                     break;
                 case 6:
                     buscarTop5Series();
+                    break;
+                case 7:
+                    buscarSeriesPorCategoria();
                     break;
                 case 0:
                     System.out.println("Encerrando aplicação");
@@ -151,7 +152,7 @@ public class Main {
     private void buscarSeriePorAtor() {
         System.out.println("Digite o nome do ator ou da atriz:");
         var nomeAtor = leitura.nextLine();
-        System.out.println("Avaliação mínima da série:");
+        System.out.println("Avaliação mínima da série (coloque 0 para sem avaliação mínima):");
         var avaliacao = leitura.nextDouble();
 
         List<Serie> seriesEncontradas = (avaliacao > 0)
@@ -176,6 +177,23 @@ public class Main {
         }
         else {
             System.out.println("Nenhuma série salva no banco de dados para listar");
+        }
+    }
+
+    private void buscarSeriesPorCategoria() {
+        System.out.println("Digite a categoria que deseja buscar das séries:");
+        var nomeCategoria = leitura.next();
+
+        Categoria categoria = Categoria.fromPortugues(nomeCategoria);
+
+        List<Serie> seriesPorCategoria = serieRepository.findByGenero(categoria);
+
+        if(!seriesPorCategoria.isEmpty()) {
+            System.out.println((seriesPorCategoria.size() > 1) ? "Series encontradas:" : "Serie encontrada:");
+            seriesPorCategoria.forEach(System.out::println);
+        }
+        else {
+            System.out.println("Nenhuma série encontrada");
         }
     }
 }
