@@ -33,6 +33,7 @@ public class Main {
                     5 - Buscar séries por ator     
                     6 - Top 5 séries 
                     7 - Buscar séries por categoria 
+                    8 - Buscar series por quantidade máxima de temporada
                     0 - Sair   
                     
                     Digite a opção desejada:""";
@@ -62,6 +63,9 @@ public class Main {
                     break;
                 case 7:
                     buscarSeriesPorCategoria();
+                    break;
+                case 8:
+                    buscarSeriePorQtdTemporada();
                     break;
                 case 0:
                     System.out.println("Encerrando aplicação");
@@ -191,6 +195,25 @@ public class Main {
         if(!seriesPorCategoria.isEmpty()) {
             System.out.println((seriesPorCategoria.size() > 1) ? "Series encontradas:" : "Serie encontrada:");
             seriesPorCategoria.forEach(System.out::println);
+        }
+        else {
+            System.out.println("Nenhuma série encontrada");
+        }
+    }
+
+    private void buscarSeriePorQtdTemporada() {
+        System.out.println("Digite a quantidade máxima de temporadas:");
+        var numTemporadas = leitura.nextInt();
+        System.out.println("Avaliação mínima da série (coloque 0 para sem avaliação mínima):");
+        var avaliacao = leitura.nextDouble();
+
+        List<Serie> seriesPorQtdTemporada = (avaliacao > 0)
+                ? serieRepository.findByTotalTemporadasLessThanEqualAndAvaliacaoGreaterThanEqual(numTemporadas, avaliacao)
+                : serieRepository.findByTotalTemporadasLessThanEqual(numTemporadas);
+
+        if(!seriesPorQtdTemporada.isEmpty()) {
+            System.out.println((seriesPorQtdTemporada.size() > 1) ? "Series encontradas:" : "Serie encontrada:");
+            seriesPorQtdTemporada.forEach(System.out::println);
         }
         else {
             System.out.println("Nenhuma série encontrada");
