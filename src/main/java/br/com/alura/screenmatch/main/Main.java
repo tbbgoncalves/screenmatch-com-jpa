@@ -35,6 +35,7 @@ public class Main {
                     6 - Top 5 séries 
                     7 - Buscar séries por categoria 
                     8 - Buscar series por quantidade máxima de temporada
+                    9 - Buscar episódio por trecho do título
                     0 - Sair   
                     
                     Digite o número da opção desejada:""";
@@ -67,6 +68,9 @@ public class Main {
                     break;
                 case 8:
                     buscarSeriePorQtdTemporada();
+                    break;
+                case 9:
+                    buscarEpisodioPorTrecho();
                     break;
                 case 0:
                     System.out.println("Encerrando aplicação");
@@ -134,6 +138,7 @@ public class Main {
     private void listarSeriesBuscadas() {
         series = serieRepository.findAll();
 
+        System.out.println("Séries buscadas até o momento:");
         series.stream()
                 .sorted(Comparator.comparing(Serie::getTitulo))
                 .forEach(System.out::println);
@@ -146,7 +151,7 @@ public class Main {
         Optional<Serie> serieBuscada = serieRepository.findByTituloContainingIgnoreCase(nomeSerie);
 
         if(serieBuscada.isPresent()) {
-            System.out.printf("Serie encontrada:");
+            System.out.printf("Série encontrada:");
             System.out.println(serieBuscada.get());
         }
         else {
@@ -164,13 +169,7 @@ public class Main {
                 ? serieRepository.findByAtoresContainingIgnoreCaseAndAvaliacaoGreaterThanEqual(nomeAtor, avaliacao)
                 : serieRepository.findByAtoresContainingIgnoreCase(nomeAtor);
 
-        if(!seriesEncontradas.isEmpty()) {
-            System.out.println((seriesEncontradas.size() > 1) ? "Series encontradas:" : "Serie encontrada:");
-            seriesEncontradas.forEach(System.out::println);
-        }
-        else {
-            System.out.println("Nenhuma série encontrada");
-        }
+        imprimirResultadoBusca(seriesEncontradas);
     }
 
     private void buscarTop5Series() {
@@ -193,13 +192,7 @@ public class Main {
 
         List<Serie> seriesPorCategoria = serieRepository.findByGenero(categoria);
 
-        if(!seriesPorCategoria.isEmpty()) {
-            System.out.println((seriesPorCategoria.size() > 1) ? "Series encontradas:" : "Serie encontrada:");
-            seriesPorCategoria.forEach(System.out::println);
-        }
-        else {
-            System.out.println("Nenhuma série encontrada");
-        }
+        imprimirResultadoBusca(seriesPorCategoria);
     }
 
     private void buscarSeriePorQtdTemporada() {
@@ -212,12 +205,25 @@ public class Main {
                 ? serieRepository.seriesPorTempoadaEAvaliacao(numTemporadas, avaliacao)
                 : serieRepository.findByTotalTemporadasLessThanEqual(numTemporadas);
 
-        if(!seriesPorQtdTemporada.isEmpty()) {
-            System.out.println((seriesPorQtdTemporada.size() > 1) ? "Series encontradas:" : "Serie encontrada:");
-            seriesPorQtdTemporada.forEach(System.out::println);
+        imprimirResultadoBusca(seriesPorQtdTemporada);
+    }
+
+    private void buscarEpisodioPorTrecho() {
+        System.out.println("Digite um trecho do nome do episodio para busca:");
+        var trechoEpisodio = leitura.nextLine();
+
+        List<Episodio> episodiosEncontrados = serieRepository.episodiosPorTrecho(trechoEpisodio);
+
+        imprimirResultadoBusca(episodiosEncontrados);
+    }
+
+    private <T> void imprimirResultadoBusca(List<T> dados) {
+        if(!dados.isEmpty()) {
+            System.out.println("Resultado da busca:");
+            dados.forEach(System.out::println);
         }
         else {
-            System.out.println("Nenhuma série encontrada");
+            System.out.println("Nenhuma informação encontrada na busca");
         }
     }
 }

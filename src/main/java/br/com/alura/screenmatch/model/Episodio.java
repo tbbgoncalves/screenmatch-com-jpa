@@ -104,9 +104,10 @@ public class Episodio {
     @Override
     public String toString() {
         return "Episodio{" +
-                "titulo='" + titulo + '\'' +
+                "serie='" + serie.getTitulo() + '\'' +
                 ", temporada=" + temporada +
                 ", numero=" + numero +
+                ", titulo=" + titulo +
                 ", avaliacao=" + avaliacao +
                 ", dataLancamento=" + dataLancamento +
                 '}';
