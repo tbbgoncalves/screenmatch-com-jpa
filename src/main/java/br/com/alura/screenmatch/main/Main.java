@@ -15,8 +15,8 @@ public class Main {
     private ConsumoApi consumoApi = new ConsumoApi();
     private ConversorDados conversorDados = new ConversorDados();
     private SerieRepository serieRepository;
-    private List<Serie> series = new ArrayList<>();
-
+    private List<Serie> seriesBuscadas;
+    private Optional<Serie> serieBuscada;
     public Main(SerieRepository serieRepository) {
         this.serieRepository = serieRepository;
     }
@@ -36,6 +36,7 @@ public class Main {
                     7 - Buscar séries por categoria 
                     8 - Buscar series por quantidade máxima de temporada
                     9 - Buscar episódio por trecho do título
+                    10 - Top 5 episódios de uma série
                     0 - Sair   
                     
                     Digite o número da opção desejada:""";
@@ -71,6 +72,9 @@ public class Main {
                     break;
                 case 9:
                     buscarEpisodioPorTrecho();
+                    break;
+                case 10:
+                    buscarTop5EpisodiosPorSerie();
                     break;
                 case 0:
                     System.out.println("Encerrando aplicação");
@@ -136,10 +140,10 @@ public class Main {
     }
 
     private void listarSeriesBuscadas() {
-        series = serieRepository.findAll();
+        seriesBuscadas = serieRepository.findAll();
 
         System.out.println("Séries buscadas até o momento:");
-        series.stream()
+        seriesBuscadas.stream()
                 .sorted(Comparator.comparing(Serie::getTitulo))
                 .forEach(System.out::println);
     }
@@ -148,7 +152,7 @@ public class Main {
         System.out.println("Digite o nome da serie:");
         var nomeSerie = leitura.nextLine();
 
-        Optional<Serie> serieBuscada = serieRepository.findByTituloContainingIgnoreCase(nomeSerie);
+        serieBuscada = serieRepository.findByTituloContainingIgnoreCase(nomeSerie);
 
         if(serieBuscada.isPresent()) {
             System.out.printf("Série encontrada:");
@@ -215,6 +219,18 @@ public class Main {
         List<Episodio> episodiosEncontrados = serieRepository.episodiosPorTrecho(trechoEpisodio);
 
         imprimirResultadoBusca(episodiosEncontrados);
+    }
+
+    private void buscarTop5EpisodiosPorSerie() {
+        buscarSeriePorTitulo();
+
+        if(serieBuscada.isPresent()) {
+            Serie serie = serieBuscada.get();
+
+            List<Episodio> topEpisodios = serieRepository.top5EpisodiosPorSerie(serie);
+
+            imprimirResultadoBusca(topEpisodios);
+        }
     }
 
     private <T> void imprimirResultadoBusca(List<T> dados) {
