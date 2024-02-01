@@ -3,6 +3,7 @@ package br.com.alura.screenmatch.repository;
 import br.com.alura.screenmatch.model.Categoria;
 import br.com.alura.screenmatch.model.Serie;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,11 +15,14 @@ public interface SerieRepository extends JpaRepository<Serie, Long> {
 
     List<Serie> findByAtoresContainingIgnoreCaseAndAvaliacaoGreaterThanEqual(String nomeAtor, double avalicao);
 
+    List<Serie> findTop5ByOrderByAvaliacaoDesc();
+
+    List<Serie> findByGenero(Categoria categoria);
+
     List<Serie> findByTotalTemporadasLessThanEqual(int totalTemporadas);
 
     List<Serie> findByTotalTemporadasLessThanEqualAndAvaliacaoGreaterThanEqual(int totalTemporadas, double avaliacao);
 
-    List<Serie> findTop5ByOrderByAvaliacaoDesc();
-
-    List<Serie> findByGenero(Categoria categoria);
+    @Query("select s from Serie s where s.totalTemporadas <= :totalTemporadas and s.avaliacao >= :avaliacao")
+    List<Serie> seriesPorTempoadaEAvaliacao(int totalTemporadas, double avaliacao);
 }

@@ -26,7 +26,8 @@ public class Main {
 
         do {
             var menu = """
-                    \n1 - Buscar dados de série
+                    \nOpções Disponíveis
+                    1 - Buscar dados de série
                     2 - Buscar dados de episódios      
                     3 - Listar as séries buscadas
                     4 - Pesquisar série buscada 
@@ -36,7 +37,7 @@ public class Main {
                     8 - Buscar series por quantidade máxima de temporada
                     0 - Sair   
                     
-                    Digite a opção desejada:""";
+                    Digite o número da opção desejada:""";
 
             System.out.println(menu);
             opcao = leitura.nextInt();
@@ -208,7 +209,7 @@ public class Main {
         var avaliacao = leitura.nextDouble();
 
         List<Serie> seriesPorQtdTemporada = (avaliacao > 0)
-                ? serieRepository.findByTotalTemporadasLessThanEqualAndAvaliacaoGreaterThanEqual(numTemporadas, avaliacao)
+                ? serieRepository.seriesPorTempoadaEAvaliacao(numTemporadas, avaliacao)
                 : serieRepository.findByTotalTemporadasLessThanEqual(numTemporadas);
 
         if(!seriesPorQtdTemporada.isEmpty()) {
